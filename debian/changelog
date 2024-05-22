@@ -1,3 +1,38 @@
+r-cran-class (7.3-22-2) unstable; urgency=medium
+
+  * Rebuilding for unstable following bookworm release
+  
+  * debian/control: Set Build-Depends: to current R version
+
+ -- Dirk Eddelbuettel <edd@debian.org>  Wed, 21 Jun 2023 06:47:47 -0500
+
+r-cran-class (7.3-22-1) experimental; urgency=medium
+
+  * New upstream release (into 'experimental' while Debian is frozen)
+
+  * debian/control: Set Build-Depends: to current R version
+
+ -- Dirk Eddelbuettel <edd@debian.org>  Mon, 08 May 2023 17:29:25 -0500
+
+r-cran-class (7.3-21-1) unstable; urgency=medium
+
+  * New upstream release
+
+  * debian/control: Set (Build-)Depends: to current R version
+  * debian/control: Set Standards-Version: to current version 
+  * debian/control: Switch to virtual debhelper-compat (= 12)
+
+ -- Dirk Eddelbuettel <edd@debian.org>  Mon, 23 Jan 2023 07:07:30 -0600
+
+r-cran-class (7.3-20-1) unstable; urgency=medium
+
+  * New upstream release
+  
+  * debian/control: Set Build-Depends: to current R version
+  * debian/control: Set Standards-Version: to current version
+
+ -- Dirk Eddelbuettel <edd@debian.org>  Thu, 13 Jan 2022 08:32:14 -0600
+
 r-cran-class (7.3-19-2) unstable; urgency=medium
 
   * Simple rebuild for unstable following Debian 11 release

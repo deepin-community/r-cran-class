@@ -1,5 +1,5 @@
 /*
- *  class/src/class.c by W. N. Venables and B. D. Ripley  Copyright (C) 1994-2018
+ *  class/src/class.c by W. N. Venables and B. D. Ripley  Copyright (C) 1994-2022
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -28,16 +28,16 @@
 #define UNIF unif_rand()
 
 void
-VR_knn1(Sint *pntr, Sint *pnte, Sint *p, double *train, Sint *class,
-	double *test, Sint *res, Sint *votes, Sint *nc, double *dists)
+VR_knn1(int *pntr, int *pnte, int *p, double *train, int *class,
+	double *test, int *res, int *votes, int *nc, double *dists)
 {
     int   npat, index, i, j, k, ntr = *pntr, nte = *pnte, nind=0, ntie, *ind;
     double dm, dist, tmp;
 
     RANDIN;
-    ind = Calloc(ntr, int);
+    ind = R_Calloc(ntr, int);
     for (npat = 0; npat < nte; npat++) {
-	dm = DOUBLE_XMAX;
+	dm = DBL_MAX; // was DOUBLE_XMAX;
 	for (j = 0; j < ntr; j++) {
 	    dist = 0.0;
 	    for (k = 0; k < *p; k++) {
@@ -83,7 +83,7 @@ VR_knn1(Sint *pntr, Sint *pnte, Sint *p, double *train, Sint *class,
 	dists[npat] = dm;
     }
     RANDOUT;
-    Free(ind);
+    R_Free(ind);
 }
 
 
@@ -92,9 +92,9 @@ VR_knn1(Sint *pntr, Sint *pnte, Sint *p, double *train, Sint *class,
 
 
 void
-VR_knn(Sint *kin, Sint *lin, Sint *pntr, Sint *pnte, Sint *p,
-       double *train, Sint *class, double *test, Sint *res, double *pr,
-       Sint *votes, Sint *nc, Sint *cv, Sint *use_all)
+VR_knn(int *kin, int *lin, int *pntr, int *pnte, int *p,
+       double *train, int *class, double *test, int *res, double *pr,
+       int *votes, int *nc, int *cv, int *use_all)
 {
     int   i, index, j, k, k1, kinit = *kin, kn, l = *lin, mm, npat, ntie,
           ntr = *pntr, nte = *pnte, extras;
@@ -111,7 +111,7 @@ VR_knn(Sint *kin, Sint *lin, Sint *pntr, Sint *pnte, Sint *p,
     for (npat = 0; npat < nte; npat++) {
 	kn = kinit;
 	for (k = 0; k < kn; k++)
-	    nndist[k] = 0.99 * DOUBLE_XMAX;
+	    nndist[k] = 0.99 * DBL_MAX;
 	for (j = 0; j < ntr; j++) {
 	    if ((*cv > 0) && (j == npat))
 		continue;
@@ -136,7 +136,7 @@ VR_knn(Sint *kin, Sint *lin, Sint *pntr, Sint *pnte, Sint *p,
 				error("too many ties in knn");
 			break;
 		    }
-	    nndist[kn] = 0.99 * DOUBLE_XMAX;
+	    nndist[kn] = 0.99 * DBL_MAX;
 	}
 
 	for (j = 0; j <= *nc; j++)
@@ -207,20 +207,20 @@ VR_knn(Sint *kin, Sint *lin, Sint *pntr, Sint *pnte, Sint *p,
 #define min9(a,b) ((a < b)?a:b)
 
 void
-VR_olvq(double *alpha, Sint *pn, Sint *p, double *x, Sint *cl,
-	Sint *pncodes, double *xc, Sint *clc, Sint *niter,
-	Sint *iters)
+VR_olvq(double *alpha, int *pn, int *p, double *x, int *cl,
+	int *pncodes, double *xc, int *clc, int *niter,
+	int *iters)
 {
     int   index=0, iter, j, k, n = *pn, ncodes = *pncodes, npat, s;
     double *al;
     double dist, dm, tmp;
 
-    al = Calloc(ncodes, double);
+    al = R_Calloc(ncodes, double);
     for (j = 0; j < ncodes; j++)
 	al[j] = *alpha;
     for (iter = 0; iter < *niter; iter++) {
 	npat = iters[iter];
-	dm = DOUBLE_XMAX;
+	dm = DBL_MAX;
 	for (j = 0; j < ncodes; j++) {
 	    dist = 0.0;
 	    for (k = 0; k < *p; k++) {
@@ -238,13 +238,13 @@ VR_olvq(double *alpha, Sint *pn, Sint *p, double *x, Sint *cl,
 		(x[npat + k * n] - xc[index + k * ncodes]);
 	al[index] = min9(*alpha, al[index] / (1 + s * al[index]));
     }
-    Free(al);
+    R_Free(al);
 }
 
 void
-VR_lvq1(double *alpha, Sint *pn, Sint *p, double *x, Sint *cl,
-	Sint *pncodes, double *xc, Sint *clc, Sint *niter,
-	Sint *iters)
+VR_lvq1(double *alpha, int *pn, int *p, double *x, int *cl,
+	int *pncodes, double *xc, int *clc, int *niter,
+	int *iters)
 {
     int   index = 0, iter, j, k, n = *pn, ncodes = *pncodes, npat, s;
     double alpha_t;
@@ -253,7 +253,7 @@ VR_lvq1(double *alpha, Sint *pn, Sint *p, double *x, Sint *cl,
     for (iter = 0; iter < *niter; iter++) {
 	npat = iters[iter];
 	alpha_t = *alpha * (*niter - iter) / (double) *niter;
-	dm = DOUBLE_XMAX;
+	dm = DBL_MAX;
 	for (j = 0; j < ncodes; j++) {
 	    dist = 0.0;
 	    for (k = 0; k < *p; k++) {
@@ -273,9 +273,9 @@ VR_lvq1(double *alpha, Sint *pn, Sint *p, double *x, Sint *cl,
 }
 
 void
-VR_lvq2(double *alpha, double *win, Sint *pn, Sint *p, double *x,
-	Sint *cl, Sint *pncodes, double *xc, Sint *clc,
-	Sint *niter, Sint *iters)
+VR_lvq2(double *alpha, double *win, int *pn, int *p, double *x,
+	int *cl, int *pncodes, double *xc, int *clc,
+	int *niter, int *iters)
 {
     int index = 0, iter, j, k, n = *pn, ncodes = *pncodes, nindex = 0,
 	npat, ntmp;
@@ -285,7 +285,7 @@ VR_lvq2(double *alpha, double *win, Sint *pn, Sint *p, double *x,
     for (iter = 0; iter < *niter; iter++) {
 	npat = iters[iter];
 	alpha_t = *alpha * (*niter - iter) / (double) *niter;
-	ndm = dm = DOUBLE_XMAX;
+	ndm = dm = DBL_MAX;
 
 	/* Find two nearest codebook vectors */
 	for (j = 0; j < ncodes; j++) {
@@ -324,9 +324,9 @@ VR_lvq2(double *alpha, double *win, Sint *pn, Sint *p, double *x,
 }
 
 void
-VR_lvq3(double *alpha, double *win, double *epsilon, Sint *pn, Sint *p,
-	double *x, Sint *cl, Sint *pncodes, double *xc, Sint *clc,
-	Sint *niter, Sint *iters)
+VR_lvq3(double *alpha, double *win, double *epsilon, int *pn, int *p,
+	double *x, int *cl, int *pncodes, double *xc, int *clc,
+	int *niter, int *iters)
 {
     int index = 0, iter, j, k, n = *pn, ncodes = *pncodes, nindex = 0,
 	npat, ntmp;
@@ -336,7 +336,7 @@ VR_lvq3(double *alpha, double *win, double *epsilon, Sint *pn, Sint *p,
     for (iter = 0; iter < *niter; iter++) {
 	npat = iters[iter];
 	alpha_t = *alpha * (*niter - iter) / (double) *niter;
-	ndm = dm = DOUBLE_XMAX;
+	ndm = dm = DBL_MAX;
 	/* Find two nearest codebook vectors */
 	for (j = 0; j < ncodes; j++) {
 	    dist = 0.0;
@@ -383,7 +383,7 @@ VR_lvq3(double *alpha, double *win, double *epsilon, Sint *pn, Sint *p,
 void
 VR_onlineSOM(double *data, double *codes, double *nhbrdist,
 	     double *alpha, double *radii,
-	     Sint *pn, Sint *pp, Sint *pncodes, Sint *rlen)
+	     int *pn, int *pp, int *pncodes, int *rlen)
 {
     int n = *pn, p = *pp, ncodes = *pncodes;
     int i, j, k, nearest = 0 /* -Wall */, nind;
@@ -397,7 +397,7 @@ VR_onlineSOM(double *data, double *codes, double *nhbrdist,
 	/* find the nearest code 'near' */
 	/* nind is the number of tied minima,  unlike VR_knn1 */
 	nind = 1; // for compilers: set to 1 when first min found.
-	dm = DOUBLE_XMAX;
+	dm = DBL_MAX;
 	for (cd = 0; cd < ncodes; cd++) {
 	    dist = 0.0;
 	    for (j = 0; j < p; j++) {
